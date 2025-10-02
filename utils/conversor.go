@@ -1,27 +1,35 @@
 package utils
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 func ConvertPrice(priceString string) (float64, error) {
 	if priceString == "" {
-		return 0, fmt.Errorf("empty price")
+		return 0, nil
 	}
 
-	clean := strings.ReplaceAll(priceString, "R$", "")
-	clean = strings.ReplaceAll(clean, " ", "")
-	clean = strings.ReplaceAll(clean, ".", "")
-
-	clean = strings.ReplaceAll(clean, ",", ".")
-
-	price, err := strconv.ParseFloat(clean, 64)
-
-	if err != nil {
-		return 0, fmt.Errorf("error trying to convert price %s: %v", priceString, err)
+	var builder strings.Builder
+	for _, char := range priceString {
+		if unicode.IsDigit(char) || char == '.' || char == ',' {
+			builder.WriteRune(char)
+		}
 	}
 
-	return price, nil
+	clean := builder.String()
+
+	if clean == "" {
+		return 0, nil
+	}
+
+	if strings.Contains(clean, ",") {
+		if strings.Contains(clean, ".") {
+			clean = strings.ReplaceAll(clean, ".", "")
+		}
+		clean = strings.ReplaceAll(clean, ",", ".")
+	}
+
+	return strconv.ParseFloat(clean, 64)
 }
