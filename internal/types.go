@@ -1,7 +1,7 @@
-package main
+package internal
 
 type Product struct {
-	ID            string  `json:"id"`
+	//ID            string  `json:"id"`
 	Title         string  `json:"title"`
 	Price         float64 `json:"price"`
 	PriceOriginal float64 `json:"price_original,omitempty"`
